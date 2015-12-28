@@ -1,0 +1,47 @@
+<?php
+/**
+ * Copyright © 2015 aaoocommerce. All rights reserved.
+ */
+?>
+<?php
+/**
+ * {{controller}} {{action}} template
+ *
+ * @var $block \Aaoo\Ajaxcart\Block\Cart\Index
+ */
+?>
+<script>
+    require([
+        'jquery',
+        'mage/mage',
+        'Magento_Catalog/product/view/validation',
+        'Magento_Catalog/js/catalog-add-to-cart'
+    ], function ($) {
+        'use strict';
+        $('.tocart').on('click', function (){
+            var flag = true;
+            $(this).parents('li').find('.product-item-details input').each(function (){
+                if($(this).val().length > 0){
+                    var aaoo_input = '<input class="aaoo-input" type="hidden" name="'+ $(this).attr('name') +'" value="'+ $(this).val() +'" />';
+                    $(this).parents('li').find('form').append(aaoo_input);
+                    $(this).parent().find('.mage-error').remove();
+                }else{
+                    if($(this).parent().find('.mage-error').length <= 0){
+                        var error_message = '<div id="' + $(this).attr('name') + '-error" class="mage-error" generated="true" for="' + $(this).attr('name') + '">This is a required field.</div>'
+                        $(this).parent().append(error_message);
+                    }
+                    flag = false;
+                }
+            });
+            if(flag === true){
+                $('.mage-error').remove();
+                var widget = $(this).parents('li').find('form').catalogAddToCart({
+                    bindSubmit: false
+                });
+                widget.catalogAddToCart('submitForm', $(this).parents('li').find('form'));
+                $('.aaoo-input').remove();
+            }
+            return false;
+        });
+    });
+</script>
